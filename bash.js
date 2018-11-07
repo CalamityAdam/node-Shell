@@ -1,28 +1,31 @@
-const pwd = require("./pwd");
-const ls = require("./ls");
-
-
-const chalk = require("chalk");
-
-const returnRandomColor = () => {
-  const colors = ["red", "cyan", "magenta", "green", "yellow"];
-
-  const randomIndex = Math.floor(Math.random() * colors.length);
-
-  return colors[randomIndex];
+const prompt = data => {
+  // process.stdout.write(data);
+  console.log(data);
+  process.stdout.write('> ');
 };
-console.log(chalk[returnRandomColor()]("------------------------------"));
+process.stdout.write('prompt > ');
 
-process.stdout.write("prompt > ");
+const main = data => {
+  const entry = data.toString().trim();
+  const [command, arg] = entry.split(' ');
+  switch (command) {
+    case 'pwd':
+      require('./pwd')(prompt);
+      break;
+    case 'ls':
+      require('./ls')(prompt);
+      break;
+    case 'cat':
+      require('./cat')(arg, prompt);
+      break;
+    case 'curl':
+      require('./curl')(arg, prompt);
+      break;
 
-process.stdin.on("data", data => {
-  const cmd = data.toString().trim();
-  if (cmd === "pwd") {
-    pwd();
-  } else if (cmd === "ls") {
-    ls();
-  } else {
-    process.stdout.write("You typed: " + cmd);
+    default:
+      prompt('not found');
   }
-  process.stdout.write("\nprompt > ");
-});
+};
+
+prompt('Welcome to Node Shell!');
+process.stdin.on('data', main);
